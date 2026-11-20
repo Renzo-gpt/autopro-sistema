@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Inventario de Repuestos')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: topbar('dashboard')}"></div>
+<nav th:replace="~{fragments/layout :: navbarAdmin}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container pb-5">
+    <div class="card card-modern p-4 mb-4" sec:authorize="hasRole('ADMIN')">
+        <h5 class="fw-bold mb-3"><i class="bi bi-box-seam text-primary me-2"></i>Registrar Nuevo Repuesto</h5>
+        <form th:action="@{/inventario/guardar}" th:object="${repuesto}" method="post" class="row g-2">
+            <div class="col-md-2">
+                <label class="form-label small">Código *</label>
+                <input type="text" th:field="*{codigo}" class="form-control" placeholder="REP-005" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Nombre *</label>
+                <input type="text" th:field="*{nombre}" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Categoría *</label>
+                <input type="text" th:field="*{categoria}" class="form-control" placeholder="Frenos" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Precio (S/) *</label>
+                <input type="number" step="0.01" th:field="*{precioUnitario}" class="form-control" required>
+            </div>
+            <div class="col-md-1">
+                <label class="form-label small">Stock *</label>
+                <input type="number" th:field="*{stockActual}" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Stock Mín. *</label>
+                <input type="number" th:field="*{stockMinimo}" class="form-control" value="5" required>
+            </div>
+            <div class="col-12 text-end mt-2">
+                <button type="submit" class="btn btn-at-primary">Guardar Repuesto</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card card-modern p-4">
+        <h5 class="fw-bold mb-3">Catálogo de Repuestos y Control de Stock</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Repuesto</th>
+                        <th>Categoría</th>
+                        <th>Precio (S/)</th>
+                        <th>Stock Actual</th>
+                        <th>Estado</th>
+                        <th sec:authorize="hasRole('ADMIN')">Reposición Rápida</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="r : ${repuestos}">
+                        <td class="fw-bold" th:text="${r.codigo}"></td>
+                        <td th:text="${r.nombre}"></td>
+                        <td th:text="${r.categoria}"></td>
+                        <td th:text="${r.precioUnitario}"></td>
+                        <td class="fw-bold" th:text="${r.stockActual}"></td>
+                        <td>
+                            <span th:if="${r.stockBajo}" class="badge bg-danger">Stock Bajo (Mín: <span th:text="${r.stockMinimo}"></span>)</span>
+                            <span th:unless="${r.stockBajo}" class="badge bg-success">Óptimo</span>
+                        </td>
+                        <td sec:authorize="hasRole('ADMIN')">
+                            <form th:action="@{/inventario/reponer/{id}(id=${r.id})}" method="post" class="d-flex gap-1">
+                                <input type="number" name="cantidad" class="form-control form-control-sm" style="width: 75px;" min="1" value="5">
+                                <button type="submit" class="btn btn-sm btn-outline-success">+ Ingresar</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

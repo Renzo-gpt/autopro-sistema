@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Clientes y Vehículos')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: topbar('dashboard')}"></div>
+<nav th:replace="~{fragments/layout :: navbarAdmin}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container pb-5">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card card-modern p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-person-plus text-primary me-2"></i>Registrar Cliente</h5>
+                <form th:action="@{/clientes/guardar}" th:object="${cliente}" method="post">
+                    <div class="row g-2">
+                        <div class="col-md-5">
+                            <label class="form-label small">DNI / RUC *</label>
+                            <input type="text" th:field="*{documento}" class="form-control" required>
+                            <small class="text-danger" th:if="${#fields.hasErrors('documento')}" th:errors="*{documento}"></small>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label small">Nombres / Razón Social *</label>
+                            <input type="text" th:field="*{nombres}" class="form-control" required>
+                        </div>
+                        <div class="col-md-5">
+                            <label class="form-label small">Teléfono *</label>
+                            <input type="text" th:field="*{telefono}" class="form-control" required>
+                        </div>
+                        <div class="col-md-7">
+                            <label class="form-label small">Correo Electrónico</label>
+                            <input type="email" th:field="*{email}" class="form-control">
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small">Dirección</label>
+                            <input type="text" th:field="*{direccion}" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-at-primary mt-3 w-100">Guardar Cliente</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-modern p-4">
+                <h5 class="fw-bold mb-3"><i class="bi bi-car-front text-success me-2"></i>Registrar Vehículo</h5>
+                <form th:action="@{/clientes/vehiculos/guardar}" th:object="${vehiculo}" method="post">
+                    <div class="row g-2">
+                        <div class="col-12">
+                            <label class="form-label small">Propietario *</label>
+                            <select name="clienteId" class="form-select" required>
+                                <option value="">-- Seleccione Cliente --</option>
+                                <option th:each="c : ${clientes}" th:value="${c.id}"
+                                        th:text="${c.documento + ' - ' + c.nombres}"></option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">Placa *</label>
+                            <input type="text" th:field="*{placa}" class="form-control text-uppercase" placeholder="ABC-123" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">Marca *</label>
+                            <input type="text" th:field="*{marca}" class="form-control" placeholder="Toyota" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small">Modelo *</label>
+                            <input type="text" th:field="*{modelo}" class="form-control" placeholder="Yaris" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Año *</label>
+                            <input type="number" th:field="*{anio}" class="form-control" value="2022" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Color</label>
+                            <input type="text" th:field="*{color}" class="form-control">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3 w-100">Asociar Vehículo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="card card-modern p-4 mt-4">
+        <h5 class="fw-bold mb-3">Vehículos Registrados</h5>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Placa</th>
+                        <th>Marca / Modelo</th>
+                        <th>Año</th>
+                        <th>Propietario</th>
+                        <th>DNI/RUC</th>
+                        <th>Teléfono</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="v : ${vehiculos}">
+                        <td class="fw-bold" th:text="${v.placa}"></td>
+                        <td th:text="${v.marca + ' ' + v.modelo}"></td>
+                        <td th:text="${v.anio}"></td>
+                        <td th:text="${v.cliente.nombres}"></td>
+                        <td th:text="${v.cliente.documento}"></td>
+                        <td th:text="${v.cliente.telefono}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

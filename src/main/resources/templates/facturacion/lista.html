@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Facturación y Comprobantes')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: topbar('dashboard')}"></div>
+<nav th:replace="~{fragments/layout :: navbarAdmin}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container pb-5">
+    <div class="card card-modern p-4 mb-4">
+        <h5 class="fw-bold mb-3"><i class="bi bi-cash-coin text-success me-2"></i>Liquidar Orden de Trabajo Finalizada</h5>
+        <form th:action="@{/facturacion/emitir}" method="post" class="row g-3">
+            <div class="col-md-5">
+                <label class="form-label small">Orden de Trabajo (Estado: FINALIZADO) *</label>
+                <select name="ordenId" class="form-select" required>
+                    <option value="">-- Seleccione Orden --</option>
+                    <option th:each="ot : ${ordenesPorCobrar}" th:value="${ot.id}"
+                            th:text="${ot.codigoOt + ' | ' + ot.vehiculo.placa + ' - ' + ot.vehiculo.cliente.nombres + ' (Total: S/ ' + ot.total + ')'}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Tipo Comprobante *</label>
+                <select name="tipoComprobante" class="form-select">
+                    <option th:each="t : ${tiposComprobante}" th:value="${t}" th:text="${t}"></option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label class="form-label small">Método de Pago *</label>
+                <select name="metodoPago" class="form-select">
+                    <option th:each="m : ${metodosPago}" th:value="${m}" th:text="${m}"></option>
+                </select>
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-success">Confirmar Pago y Emitir Comprobante</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card card-modern p-4">
+        <h5 class="fw-bold mb-3">Comprobantes Emitidos</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>N° Comprobante</th>
+                        <th>Tipo</th>
+                        <th>Orden OT</th>
+                        <th>Cliente</th>
+                        <th>Método Pago</th>
+                        <th>Subtotal</th>
+                        <th>IGV (18%)</th>
+                        <th>Total (S/)</th>
+                        <th>PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="c : ${comprobantes}">
+                        <td class="fw-bold" th:text="${c.numeroComprobante}"></td>
+                        <td th:text="${c.tipoComprobante}"></td>
+                        <td th:text="${c.ordenTrabajo.codigoOt}"></td>
+                        <td th:text="${c.ordenTrabajo.vehiculo.cliente.nombres}"></td>
+                        <td th:text="${c.metodoPago}"></td>
+                        <td th:text="${c.subtotal}"></td>
+                        <td th:text="${c.igv}"></td>
+                        <td class="fw-bold text-success" th:text="${c.total}"></td>
+                        <td>
+                            <a th:href="@{/facturacion/pdf/{id}(id=${c.id})}" target="_blank" class="btn btn-sm btn-danger">
+                                <i class="bi bi-file-earmark-pdf"></i> PDF
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

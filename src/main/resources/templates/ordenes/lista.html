@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/layout :: head('Órdenes de Trabajo')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: topbar('dashboard')}"></div>
+<nav th:replace="~{fragments/layout :: navbarAdmin}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container pb-5">
+    <div class="card card-modern p-4 mb-4" sec:authorize="hasAnyRole('ADMIN','ASESOR')">
+        <h5 class="fw-bold mb-3"><i class="bi bi-plus-circle text-primary me-2"></i>Aperturar Nueva Orden de Trabajo (OT)</h5>
+        <form th:action="@{/ordenes/crear}" method="post" class="row g-3">
+            <div class="col-md-4">
+                <label class="form-label small">Vehículo (Placa - Cliente) *</label>
+                <select name="vehiculoId" class="form-select" required>
+                    <option value="">-- Seleccione --</option>
+                    <option th:each="v : ${vehiculos}" th:value="${v.id}"
+                            th:text="${v.placa + ' (' + v.marca + ' ' + v.modelo + ') - ' + v.cliente.nombres}"></option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Mecánico Asignado *</label>
+                <select name="mecanicoId" class="form-select" required>
+                    <option th:each="m : ${mecanicos}" th:value="${m.id}" th:text="${m.nombreCompleto}"></option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label class="form-label small">Kilometraje *</label>
+                <input type="number" name="kilometraje" class="form-control" placeholder="45000" required>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label small">Nivel Combustible *</label>
+                <select name="nivelCombustible" class="form-select">
+                    <option value="1/4">1/4 Tanque</option>
+                    <option value="1/2" selected>1/2 Tanque</option>
+                    <option value="3/4">3/4 Tanque</option>
+                    <option value="LLENO">Lleno</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <label class="form-label small">Síntomas / Falla Reportada por el Cliente *</label>
+                <textarea name="fallaReportada" class="form-control" rows="2" required></textarea>
+            </div>
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-at-primary">Generar Orden de Trabajo</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card card-modern p-4">
+        <h5 class="fw-bold mb-3">Listado de Órdenes de Trabajo</h5>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Código</th>
+                        <th>Fecha Ingreso</th>
+                        <th>Vehículo</th>
+                        <th>Cliente</th>
+                        <th>Mecánico</th>
+                        <th>Estado</th>
+                        <th>Total (S/)</th>
+                        <th>Gestión</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="ot : ${ordenes}">
+                        <td class="fw-bold text-primary" th:text="${ot.codigoOt}"></td>
+                        <td th:text="${#temporals.format(ot.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td th:text="${ot.vehiculo.placa + ' - ' + ot.vehiculo.marca}"></td>
+                        <td th:text="${ot.vehiculo.cliente.nombres}"></td>
+                        <td th:text="${ot.mecanico.nombreCompleto}"></td>
+                        <td>
+                            <span class="badge"
+                                  th:classappend="${ot.estado.name() == 'EN_DIAGNOSTICO' ? 'bg-warning text-dark' :
+                                                   (ot.estado.name() == 'EN_PROCESO' ? 'bg-info text-dark' :
+                                                   (ot.estado.name() == 'FINALIZADO' ? 'bg-success' : 'bg-secondary'))}"
+                                  th:text="${ot.estado}"></span>
+                        </td>
+                        <td class="fw-semibold" th:text="${ot.total}"></td>
+                        <td>
+                            <a th:href="@{/ordenes/{id}(id=${ot.id})}" class="btn btn-sm btn-at-primary">Atender / Ver</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
