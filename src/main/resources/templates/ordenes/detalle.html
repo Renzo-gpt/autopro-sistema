@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Detalle de Orden de Trabajo')}"></head>
+<body>
+<div th:replace="~{fragments/layout :: topbar('dashboard')}"></div>
+<nav th:replace="~{fragments/layout :: navbarAdmin}"></nav>
+<div th:replace="~{fragments/layout :: alerts}"></div>
+
+<div class="container pb-5">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="fw-bold m-0">Orden de Trabajo: <span class="text-primary" th:text="${orden.codigoOt}"></span></h4>
+        <a th:href="@{/ordenes}" class="btn btn-outline-secondary btn-sm">Volver al listado</a>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="card card-modern p-4 mb-4">
+                <h6 class="fw-bold text-uppercase text-muted mb-3">Datos del Vehículo y Recepción</h6>
+                <p class="mb-1"><strong>Cliente:</strong> <span th:text="${orden.vehiculo.cliente.nombres}"></span></p>
+                <p class="mb-1"><strong>Vehículo:</strong> <span th:text="${orden.vehiculo.marca + ' ' + orden.vehiculo.modelo + ' (' + orden.vehiculo.placa + ')'}"></span></p>
+                <p class="mb-1"><strong>Kilometraje / Combustible:</strong> <span th:text="${orden.kilometraje + ' km | ' + orden.nivelCombustible}"></span></p>
+                <p class="mb-1"><strong>Mecánico Asignado:</strong> <span th:text="${orden.mecanico.nombreCompleto}"></span></p>
+                <p class="mb-0"><strong>Falla Reportada:</strong> <span th:text="${orden.fallaReportada}"></span></p>
+            </div>
+
+            <div class="card card-modern p-4">
+                <h6 class="fw-bold text-uppercase text-muted mb-3">Diagnóstico Técnico y Cierre</h6>
+                <form th:action="@{/ordenes/{id}/actualizar(id=${orden.id})}" method="post">
+                    <div class="mb-3">
+                        <label class="form-label small">Informe de Diagnóstico / Trabajos Realizados</label>
+                        <textarea name="diagnosticoTecnico" class="form-control" rows="3"
+                                  th:text="${orden.diagnosticoTecnico}"
+                                  th:disabled="${orden.estado.name() == 'PAGADO'}"></textarea>
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label small">Costo Mano de Obra (S/)</label>
+                            <input type="number" step="0.01" name="costoManoObra" class="form-control"
+                                   th:value="${orden.costoManoObra}"
+                                   th:disabled="${orden.estado.name() == 'PAGADO'}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small">Estado de la OT</label>
+                            <select name="estado" class="form-select" th:disabled="${orden.estado.name() == 'PAGADO'}">
+                                <option th:each="est : ${estados}"
+                                        th:if="${est.name() != 'PAGADO'}"
+                                        th:value="${est}" th:text="${est}"
+                                        th:selected="${est == orden.estado}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100"
+                            th:if="${orden.estado.name() != 'PAGADO'}">Guardar Diagnóstico y Estado</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card card-modern p-4 mb-4" th:if="${orden.estado.name() != 'FINALIZADO' and orden.estado.name() != 'PAGADO'}">
+                <h6 class="fw-bold text-uppercase text-muted mb-3">Asignar Repuestos del Almacén</h6>
+                <form th:action="@{/ordenes/{id}/repuestos(id=${orden.id})}" method="post" class="row g-2">
+                    <div class="col-md-8">
+                        <select name="repuestoId" class="form-select" required>
+                            <option value="">-- Seleccione Repuesto --</option>
+                            <option th:each="r : ${repuestos}" th:value="${r.id}"
+                                    th:text="${r.nombre + ' (Stock: ' + r.stockActual + ' | S/ ' + r.precioUnitario + ')'}"></option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <input type="number" name="cantidad" class="form-control" min="1" value="1" required>
+                    </div>
+                    <div class="col-12 mt-2">
+                        <button type="submit" class="btn btn-at-primary w-100">Agregar y Descontar Stock</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card card-modern p-4">
+                <h6 class="fw-bold text-uppercase text-muted mb-3">Detalle de Repuestos y Liquidación</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Repuesto</th>
+                            <th>Cant.</th>
+                            <th>P. Unit</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="d : ${orden.detalles}">
+                            <td th:text="${d.repuesto.nombre}"></td>
+                            <td th:text="${d.cantidad}"></td>
+                            <td th:text="${d.precioUnitario}"></td>
+                            <td th:text="${d.subtotal}"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <hr>
+                <div class="text-end">
+                    <p class="mb-1">Mano de Obra: <strong>S/ <span th:text="${orden.costoManoObra}"></span></strong></p>
+                    <p class="mb-1">Subtotal: <strong>S/ <span th:text="${orden.subtotal}"></span></strong></p>
+                    <p class="mb-1">IGV (18%): <strong>S/ <span th:text="${orden.igv}"></span></strong></p>
+                    <h5 class="fw-bold text-primary">Total: S/ <span th:text="${orden.total}"></span></h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

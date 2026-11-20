@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Inicio - Gestión Mecánica')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: topbar('landing')}"></div>
+<nav th:replace="~{fragments/layout :: navbarPublico}"></nav>
+
+<!-- Hero Principal (Diseño idéntico a la captura) -->
+<section class="hero-autotaller">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <div class="hero-badge">
+                    <i class="bi bi-lightning-charge-fill"></i> Sistema digital de gestión automotriz
+                </div>
+                <h1 class="hero-title">
+                    Tu vehículo en buenas manos y <span>siempre bajo control</span>
+                </h1>
+                <p class="hero-desc">
+                    Digitaliza la gestión de tu taller mecánico. Controla clientes, vehículos,
+                    reparaciones e inventario desde una sola plataforma moderna y fácil de usar.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#cita" class="btn btn-at-primary px-4 py-3">
+                        <i class="bi bi-calendar2-check me-2"></i> Solicitar una cita
+                    </a>
+                    <a th:href="@{/seguimiento}" class="btn btn-hero-cyan px-4 py-3">
+                        <i class="bi bi-search me-2"></i> Consultar mi vehículo
+                    </a>
+                </div>
+
+                <!-- Métricas inferiores -->
+                <div class="row hero-stats g-4">
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-number">+2,500</div>
+                        <div class="stat-label">Vehículos atendidos</div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-number">+1,800</div>
+                        <div class="stat-label">Clientes satisfechos</div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-number">15</div>
+                        <div class="stat-label">Años de experiencia</div>
+                    </div>
+                    <div class="col-6 col-sm-3">
+                        <div class="stat-number">98%</div>
+                        <div class="stat-label">Satisfacción</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Beneficios -->
+<section id="beneficios" class="py-5">
+    <div class="container py-3">
+        <div class="text-center mb-5">
+            <span class="badge bg-primary-subtle text-primary px-3 py-2 mb-2">¿Por qué elegir AutoPro?</span>
+            <h2 class="fw-bold">Transparencia y eficiencia en cada reparación</h2>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card card-modern p-4 h-100">
+                    <div class="brand-icon-box mb-3"><i class="bi bi-clipboard2-pulse"></i></div>
+                    <h5 class="fw-bold">Órdenes de Trabajo Digitales</h5>
+                    <p class="text-muted small mb-0">Registro detallado desde la recepción hasta el diagnóstico técnico y entrega final sin papeles perdidos.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-modern p-4 h-100">
+                    <div class="brand-icon-box mb-3"><i class="bi bi-box-seam"></i></div>
+                    <h5 class="fw-bold">Control Exacto de Repuestos</h5>
+                    <p class="text-muted small mb-0">Descuento automático de stock en tiempo real y alertas preventivas cuando un insumo llega a su mínimo.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-modern p-4 h-100">
+                    <div class="brand-icon-box mb-3"><i class="bi bi-file-earmark-pdf"></i></div>
+                    <h5 class="fw-bold">Seguimiento y Facturación PDF</h5>
+                    <p class="text-muted small mb-0">Consulta el estado de tu auto solo con la placa y descarga comprobantes electrónicos detallados con IGV.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Sección Servicios y Solicitud de Cita -->
+<section id="servicios" class="py-5 bg-white">
+    <div class="container py-3">
+        <div class="row g-5 align-items-center">
+            <div class="col-lg-6" id="nosotros">
+                <span class="badge bg-info-subtle text-info-emphasis px-3 py-2 mb-2">Nuestros Servicios</span>
+                <h2 class="fw-bold mb-3">Mantenimiento preventivo y correctivo multimarca</h2>
+                <p class="text-muted mb-4">Contamos con técnicos certificados y escáner automotriz de última generación para garantizar la seguridad de tu vehículo.</p>
+                <div class="row g-3">
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Mantenimiento 5k / 10k km</div>
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Sistema de Frenos y ABS</div>
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Diagnóstico Electrónico</div>
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Suspensión y Dirección</div>
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Cambio de Aceite y Filtros</div>
+                    <div class="col-6"><i class="bi bi-check-circle-fill text-primary me-2"></i>Afinamiento Electrónico</div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" id="cita">
+                <div class="card card-modern p-4 border">
+                    <h4 class="fw-bold mb-1"><i class="bi bi-calendar-plus text-primary me-2"></i>Solicitar una Cita</h4>
+                    <p class="text-muted small mb-3">Agenda tu atención y evita tiempos de espera en recepción.</p>
+
+                    <div th:if="${citaExito}" class="alert alert-success small" th:text="${citaExito}"></div>
+
+                    <form th:action="@{/citas/solicitar}" method="post" class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Nombre Completo *</label>
+                            <input type="text" name="nombreCliente" class="form-control" placeholder="Ej. Luis Ramírez" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Teléfono / WhatsApp *</label>
+                            <input type="text" name="telefono" class="form-control" placeholder="999 888 777" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Placa *</label>
+                            <input type="text" name="placa" class="form-control text-uppercase" placeholder="ABC-123" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Servicio *</label>
+                            <select name="servicioSolicitado" class="form-select">
+                                <option value="Mantenimiento Preventivo">Mantenimiento Preventivo</option>
+                                <option value="Diagnóstico General">Diagnóstico General</option>
+                                <option value="Frenos y Suspensión">Frenos y Suspensión</option>
+                                <option value="Cambio de Aceite">Cambio de Aceite</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label small fw-semibold">Fecha Preferida *</label>
+                            <input type="date" name="fechaPreferida" class="form-control" required>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-semibold">Síntomas u Observaciones</label>
+                            <textarea name="observaciones" class="form-control" rows="2" placeholder="Describe brevemente el motivo de tu visita..."></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-at-primary w-100 py-2">Confirmar Solicitud de Cita</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="py-4 text-center text-white" style="background-color: #132238;">
+    <div class="container small">
+        <strong>AutoPro</strong> &copy; 2026 - Sistema de Gestión Mecánica | Desarrollado con Spring Boot, Thymeleaf y MySQL.
+    </div>
+</footer>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Seguimiento de Vehículo')}"></head>
+<body>
+
+<div th:replace="~{fragments/layout :: topbar('seguimiento')}"></div>
+<nav th:replace="~{fragments/layout :: navbarPublico}"></nav>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card card-modern p-4 p-md-5 mb-4 text-center" style="background: linear-gradient(135deg, #132238, #1d3557); color: #fff;">
+                <h3 class="fw-bold mb-2"><i class="bi bi-car-front-fill text-info me-2"></i>Consulta el Estado de tu Vehículo</h3>
+                <p class="text-light opacity-75 small mb-4">Ingresa tu número de placa para visualizar en tiempo real el avance técnico y repuestos aplicados.</p>
+                <form th:action="@{/seguimiento}" method="get" class="row g-2 justify-content-center">
+                    <div class="col-sm-7">
+                        <input type="text" name="placa" class="form-control form-control-lg text-center text-uppercase fw-bold"
+                               th:value="${placaBuscada}" placeholder="Ej. ABC-123 o XYZ-789" required>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="btn btn-hero-cyan btn-lg w-100">
+                            <i class="bi bi-search me-1"></i> Buscar
+                        </button>
+                    </div>
+                </form>
+                <div class="mt-3 small text-info">Placas de demostración disponibles: <strong>ABC-123</strong> y <strong>XYZ-789</strong></div>
+            </div>
+
+            <div th:if="${placaBuscada != null and vehiculo == null}" class="alert alert-warning text-center">
+                No se encontró ningún vehículo registrado con la placa <strong th:text="${placaBuscada}"></strong>.
+            </div>
+
+            <div th:if="${vehiculo != null}">
+                <div class="card card-modern p-4 mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <div>
+                            <span class="badge bg-primary mb-1" th:text="${vehiculo.placa}"></span>
+                            <h5 class="fw-bold mb-0" th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' (' + vehiculo.anio + ')'}"></h5>
+                            <small class="text-muted">Propietario: <span th:text="${vehiculo.cliente.nombres}"></span></small>
+                        </div>
+                        <div class="text-end">
+                            <span class="text-muted small d-block">Órdenes registradas</span>
+                            <strong class="fs-5" th:text="${#lists.size(ordenes)}">0</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:each="ot : ${ordenes}" class="card card-modern p-4 mb-3 border-start border-4 border-primary">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <h5 class="fw-bold text-primary mb-0" th:text="${ot.codigoOt}"></h5>
+                            <small class="text-muted">Ingreso: <span th:text="${#temporals.format(ot.fechaIngreso, 'dd/MM/yyyy HH:mm')}"></span> | Kilometraje: <span th:text="${ot.kilometraje + ' km'}"></span></small>
+                        </div>
+                        <span class="badge fs-6"
+                              th:classappend="${ot.estado.name() == 'EN_DIAGNOSTICO' ? 'bg-warning text-dark' :
+                                               (ot.estado.name() == 'EN_PROCESO' ? 'bg-info text-dark' :
+                                               (ot.estado.name() == 'FINALIZADO' ? 'bg-success' : 'bg-secondary'))}"
+                              th:text="${ot.estado}"></span>
+                    </div>
+
+                    <p class="mb-1 small"><strong>Falla reportada:</strong> <span th:text="${ot.fallaReportada}"></span></p>
+                    <p class="mb-3 small"><strong>Diagnóstico técnico:</strong> <span th:text="${ot.diagnosticoTecnico != null ? ot.diagnosticoTecnico : 'En evaluación por el especialista...'}"></span></p>
+
+                    <div th:if="${!#lists.isEmpty(ot.detalles)}" class="table-responsive mb-2">
+                        <table class="table table-sm table-bordered small mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Repuesto Aplicado</th>
+                                    <th>Cant.</th>
+                                    <th>Subtotal (S/)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="d : ${ot.detalles}">
+                                    <td th:text="${d.repuesto.nombre}"></td>
+                                    <td th:text="${d.cantidad}"></td>
+                                    <td th:text="${d.subtotal}"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top small">
+                        <span>Técnico: <strong th:text="${ot.mecanico.nombreCompleto}"></strong></span>
+                        <span class="fs-6 fw-bold text-dark">Total Estimado (inc. IGV): S/ <span th:text="${ot.total}"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="~{fragments/layout :: scripts}"></th:block>
+</body>
+</html>
